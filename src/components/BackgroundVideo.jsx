@@ -1,12 +1,18 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function BackgroundVideo({
 	src,
 	muted = true,
 	className = "",
 	style,
+	placeholderSrc = "/og-image.jpg",
 }) {
 	const videoRef = useRef(null);
+	const [isVideoReady, setIsVideoReady] = useState(false);
+
+	useEffect(() => {
+		setIsVideoReady(false);
+	}, [src]);
 
 	useEffect(() => {
 		const video = videoRef.current;
@@ -14,6 +20,9 @@ export default function BackgroundVideo({
 
 		video.loop = true;
 		video.playsInline = true;
+		const markReady = () => setIsVideoReady(true);
+		const markLoading = () => setIsVideoReady(false);
+
 		const tryPlay = () => {
 			video.muted = true;
 			video
@@ -40,6 +49,10 @@ export default function BackgroundVideo({
 		};
 
 		tryPlay();
+		video.addEventListener("loadeddata", markReady);
+		video.addEventListener("canplay", markReady);
+		video.addEventListener("error", markLoading);
+		video.addEventListener("stalled", markLoading);
 		video.addEventListener("loadeddata", tryPlay);
 		video.addEventListener("ended", ensureLoopingPlayback);
 		video.addEventListener("pause", ensureLoopingPlayback);
@@ -55,6 +68,10 @@ export default function BackgroundVideo({
 
 		return () => {
 			window.clearInterval(interval);
+			video.removeEventListener("loadeddata", markReady);
+			video.removeEventListener("canplay", markReady);
+			video.removeEventListener("error", markLoading);
+			video.removeEventListener("stalled", markLoading);
 			video.removeEventListener("loadeddata", tryPlay);
 			video.removeEventListener("ended", ensureLoopingPlayback);
 			video.removeEventListener("pause", ensureLoopingPlayback);
@@ -64,16 +81,44 @@ export default function BackgroundVideo({
 	}, [src, muted]);
 
 	return (
-		<video
-			ref={videoRef}
-			src={src}
-			autoPlay
-			loop
-			muted={muted}
-			playsInline
-			preload="auto"
-			className={className}
-			style={{ pointerEvents: "none", ...style }}
-		/>
+		<div
+			style={{
+				position: "absolute",
+				inset: 0,
+				pointerEvents: "none",
+				overflow: "hidden",
+			}}>
+			<img
+				src={placeholderSrc}
+				alt=""
+				aria-hidden="true"
+				style={{
+					position: "absolute",
+					inset: 0,
+					width: "100%",
+					height: "100%",
+					objectFit: "cover",
+					opacity: isVideoReady ? 0 : 1,
+					transition: "opacity 300ms ease",
+				}}
+			/>
+			<video
+				ref={videoRef}
+				src={src}
+				autoPlay
+				loop
+				muted={muted}
+				playsInline
+				preload="auto"
+				poster={placeholderSrc}
+				className={className}
+				style={{
+					pointerEvents: "none",
+					opacity: isVideoReady ? 1 : 0,
+					transition: "opacity 300ms ease",
+					...style,
+				}}
+			/>
+		</div>
 	);
 }
