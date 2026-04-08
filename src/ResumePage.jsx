@@ -132,12 +132,13 @@ export default function ResumePage({
         .resume-root {
           position: relative;
           min-height: 100vh;
+          height: 100dvh;
         }
 
         .resume-shell {
           position: relative;
           z-index: 10;
-          min-height: 100vh;
+          min-height: 100%;
           padding: clamp(18px, 3vw, 36px);
           display: grid;
           grid-template-columns: minmax(290px, 400px) minmax(520px, 1fr);
@@ -384,7 +385,7 @@ export default function ResumePage({
 
         @media (max-width: 760px) {
           .resume-shell {
-            padding: 12px;
+            padding: 86px 12px 12px 12px;
             gap: 12px;
           }
 
@@ -468,6 +469,41 @@ export default function ResumePage({
 
           .resume-helper {
             font-size: 18px;
+          }
+        }
+
+        @media (max-height: 760px) {
+          .resume-shell {
+            padding-top: 78px;
+            gap: 10px;
+          }
+
+          .resume-nav-title {
+            font-size: 48px;
+          }
+
+          .resume-nav-card {
+            padding: 10px 12px;
+          }
+
+          .resume-nav-card-title {
+            font-size: 26px;
+          }
+
+          .resume-panel {
+            padding: 10px;
+          }
+
+          .resume-panel-title {
+            font-size: 30px;
+          }
+
+          .resume-panel-subtitle {
+            font-size: 18px;
+          }
+
+          .resume-rows {
+            max-height: 36vh;
           }
         }
       `}</style>

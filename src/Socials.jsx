@@ -217,6 +217,8 @@ export default function Socials({ mediaMuted = true, sfxMuted = true }) {
           gap: 16px;
           padding-left: clamp(10px, 2vw, 22px);
           padding-right: clamp(280px, 30vw, 520px);
+          padding-top: 72px;
+          padding-bottom: 132px;
         }
 
         /* ── Each bar ── */
@@ -534,6 +536,10 @@ export default function Socials({ mediaMuted = true, sfxMuted = true }) {
         .sc-right-nav .sc-nav-arrow.left  { animation: sc-arrow-left  0.8s ease-in-out infinite; }
         .sc-right-nav .sc-nav-arrow.right { animation: sc-arrow-right 0.8s ease-in-out infinite; }
 
+        .sc-mobile-cats {
+          display: none;
+        }
+
         /* info bar under nav */
         @keyframes sc-infobar-in {
           0%   { opacity: 0; transform: translateX(40px); }
@@ -751,11 +757,47 @@ export default function Socials({ mediaMuted = true, sfxMuted = true }) {
         }
 
         @media (max-width: 900px) {
+          .sc-mobile-cats {
+            position: fixed;
+            top: 78px;
+            left: 8px;
+            right: 8px;
+            z-index: 70;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 8px;
+            pointer-events: all;
+          }
+
+          .sc-mobile-cat {
+            border: 1px solid rgba(145,245,255,0.45);
+            background: linear-gradient(180deg, rgba(12, 20, 62, 0.95), rgba(7, 12, 36, 0.95));
+            color: #dff9ff;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 17px;
+            letter-spacing: 1px;
+            line-height: 1;
+            min-height: 44px;
+            padding: 10px 8px;
+            clip-path: polygon(0 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.35), inset 0 0 0 1px rgba(255,255,255,0.06);
+          }
+
+          .sc-mobile-cat.active {
+            background: linear-gradient(180deg, rgba(143,245,255,0.96), rgba(105,223,255,0.96));
+            color: #051746;
+            box-shadow: 0 8px 14px rgba(0,0,0,0.35), 0 0 0 2px rgba(145,245,255,0.35);
+          }
+
+          .sc-root {
+            display: none;
+          }
+
           .sc-root {
             left: 0;
             right: 0;
             justify-content: flex-start;
-            padding: 90px 10px 0 10px;
+            padding: 90px 10px 126px 10px;
             gap: 10px;
           }
           .sc-bar,
@@ -791,29 +833,29 @@ export default function Socials({ mediaMuted = true, sfxMuted = true }) {
             font-size: 18px;
           }
           .sc-right-nav {
-            top: 14px;
-            right: 8px;
-            transform: scale(0.9);
-            transform-origin: top right;
+            display: none;
           }
           .sc-info-panel {
             left: 8px;
             right: 8px;
             width: auto;
-            top: auto;
-            bottom: 126px;
+            top: 132px;
+            bottom: 90px;
             padding-left: 14px;
-            max-height: 40vh;
+            max-height: none;
           }
           .sc-info-bar-wrap {
-            min-height: 58px;
+            min-height: 64px;
           }
           .sc-info-bar-text {
-            font-size: 20px;
+            font-size: 21px;
           }
           .sc-info-bar-box {
-            font-size: 15px;
+            font-size: 14px;
             padding: 0 8px;
+          }
+          .sc-info-bar-count {
+            font-size: 16px;
           }
           .sc-footer {
             left: 8px;
@@ -825,6 +867,10 @@ export default function Socials({ mediaMuted = true, sfxMuted = true }) {
           .sc-footer-row {
             justify-content: space-between;
             font-size: 12px;
+          }
+          .sc-footer-row:nth-child(3),
+          .sc-footer-row:nth-child(4) {
+            display: none;
           }
         }
 
@@ -849,8 +895,56 @@ export default function Socials({ mediaMuted = true, sfxMuted = true }) {
             font-size: 20px;
           }
           .sc-info-panel {
-            bottom: 134px;
-            max-height: 36vh;
+            top: 128px;
+            bottom: 82px;
+            max-height: none;
+            padding-left: 10px;
+            gap: 8px;
+          }
+          .sc-mobile-cats {
+            top: 74px;
+            gap: 6px;
+          }
+          .sc-mobile-cat {
+            min-height: 42px;
+            font-size: 15px;
+            padding: 9px 6px;
+          }
+        }
+
+        @media (max-height: 760px) {
+          .sc-mobile-cats {
+            top: 70px;
+          }
+
+          .sc-info-panel {
+            top: 122px;
+            bottom: 78px;
+          }
+
+          .sc-info-bar-wrap {
+            min-height: 56px;
+          }
+
+          .sc-info-bar-text {
+            font-size: 18px;
+          }
+
+          .sc-info-bar-box,
+          .sc-info-bar-count {
+            font-size: 14px;
+          }
+
+          .sc-footer {
+            bottom: 6px;
+            right: 8px;
+            gap: 4px;
+            padding: 6px 8px;
+          }
+
+          .sc-footer-row {
+            font-size: 11px;
+            gap: 6px;
           }
         }
       `}</style>
@@ -910,6 +1004,26 @@ export default function Socials({ mediaMuted = true, sfxMuted = true }) {
 					</div>
 				))}
 			</div>
+
+      {mounted && (
+        <div className="sc-mobile-cats" aria-label="Social categories">
+          {ITEMS.map((item, i) => (
+            <button
+              key={`mobile-cat-${item.id}`}
+              type="button"
+              className={`sc-mobile-cat${active === i ? " active" : ""}`}
+              onClick={() => {
+                if (active !== i) playConfirm();
+                else playHover();
+                setActive(i);
+                setActiveInfoBar(0);
+                setFocus("right");
+              }}>
+              {item.icon}
+            </button>
+          ))}
+        </div>
+      )}
 
 			{mounted && (
 				<div className="sc-right-nav" key={active}>

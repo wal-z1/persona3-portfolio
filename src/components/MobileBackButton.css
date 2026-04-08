@@ -1,7 +1,7 @@
 .mobile-back-btn {
 	position: fixed;
-	top: 12px;
-	left: 12px;
+	top: calc(env(safe-area-inset-top, 0px) + 10px);
+	left: calc(env(safe-area-inset-left, 0px) + 10px);
 	z-index: 200;
 	width: 58px;
 	height: 58px;
@@ -72,8 +72,8 @@
 
 @media (max-width: 900px) {
 	.mobile-back-btn {
-		top: 10px;
-		left: 10px;
+		top: calc(env(safe-area-inset-top, 0px) + 8px);
+		left: calc(env(safe-area-inset-left, 0px) + 8px);
 		width: 60px;
 		height: 60px;
 		font-size: 29px;
@@ -81,5 +81,13 @@
 			0 10px 24px rgba(0, 0, 0, 0.44),
 			inset 0 0 0 1px rgba(145, 245, 255, 0.92),
 			inset 0 -8px 0 rgba(0, 0, 0, 0.18);
+	}
+}
+
+@media (max-height: 680px) {
+	.mobile-back-btn {
+		width: 50px;
+		height: 50px;
+		font-size: 24px;
 	}
 }

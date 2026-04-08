@@ -300,7 +300,7 @@ export default function AboutMe({ mediaMuted = true, sfxMuted = true }) {
 
         @media (max-width: 760px) {
           .about-shell {
-            padding: 12px;
+            padding: 86px 12px 12px 12px;
             gap: 12px;
           }
 
@@ -357,6 +357,33 @@ export default function AboutMe({ mediaMuted = true, sfxMuted = true }) {
           .about-link {
             font-size: 17px;
             padding: 8px 10px;
+          }
+        }
+
+        @media (max-height: 760px) {
+          .about-shell {
+            padding-top: 80px;
+            gap: 10px;
+          }
+
+          .about-menu {
+            padding: 12px;
+          }
+
+          .about-menu-title {
+            font-size: 36px;
+          }
+
+          .about-menu-sub {
+            font-size: 20px;
+          }
+
+          .about-panel {
+            padding: 12px 18px 12px 12px;
+          }
+
+          .about-section-title {
+            margin-top: 12px;
           }
         }
       `}</style>
