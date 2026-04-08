@@ -1005,25 +1005,25 @@ export default function Socials({ mediaMuted = true, sfxMuted = true }) {
 				))}
 			</div>
 
-      {mounted && (
-        <div className="sc-mobile-cats" aria-label="Social categories">
-          {ITEMS.map((item, i) => (
-            <button
-              key={`mobile-cat-${item.id}`}
-              type="button"
-              className={`sc-mobile-cat${active === i ? " active" : ""}`}
-              onClick={() => {
-                if (active !== i) playConfirm();
-                else playHover();
-                setActive(i);
-                setActiveInfoBar(0);
-                setFocus("right");
-              }}>
-              {item.icon}
-            </button>
-          ))}
-        </div>
-      )}
+			{mounted && (
+				<div className="sc-mobile-cats" aria-label="Social categories">
+					{ITEMS.map((item, i) => (
+						<button
+							key={`mobile-cat-${item.id}`}
+							type="button"
+							className={`sc-mobile-cat${active === i ? " active" : ""}`}
+							onClick={() => {
+								if (active !== i) playConfirm();
+								else playHover();
+								setActive(i);
+								setActiveInfoBar(0);
+								setFocus("right");
+							}}>
+							{item.icon}
+						</button>
+					))}
+				</div>
+			)}
 
 			{mounted && (
 				<div className="sc-right-nav" key={active}>
