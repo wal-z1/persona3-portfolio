@@ -20,6 +20,8 @@ export default function BackgroundVideo({
 
 		video.loop = true;
 		video.playsInline = true;
+		video.defaultMuted = true;
+		video.muted = true;
 		const markReady = () => setIsVideoReady(true);
 		const markLoading = () => setIsVideoReady(false);
 
@@ -27,11 +29,7 @@ export default function BackgroundVideo({
 			video.muted = true;
 			video
 				.play()
-				.then(() => {
-					if (!muted) {
-						video.muted = false;
-					}
-				})
+				.then(() => {})
 				.catch(() => {
 					// Autoplay can be blocked on some browsers until user interaction.
 				});
@@ -49,33 +47,30 @@ export default function BackgroundVideo({
 		};
 
 		tryPlay();
-		video.addEventListener("loadeddata", markReady);
-		video.addEventListener("canplay", markReady);
+		video.addEventListener("playing", markReady);
+		video.addEventListener("canplay", tryPlay);
+		video.addEventListener("loadeddata", tryPlay);
+		video.addEventListener("waiting", markLoading);
 		video.addEventListener("error", markLoading);
 		video.addEventListener("stalled", markLoading);
-		video.addEventListener("loadeddata", tryPlay);
 		video.addEventListener("ended", ensureLoopingPlayback);
-		video.addEventListener("pause", ensureLoopingPlayback);
-		video.addEventListener("stalled", ensureLoopingPlayback);
+		video.addEventListener("pause", markLoading);
 
 		const onVisibilityChange = () => {
 			if (!document.hidden) ensureLoopingPlayback();
 		};
 
-		const interval = window.setInterval(ensureLoopingPlayback, 2200);
-
 		document.addEventListener("visibilitychange", onVisibilityChange);
 
 		return () => {
-			window.clearInterval(interval);
-			video.removeEventListener("loadeddata", markReady);
-			video.removeEventListener("canplay", markReady);
+			video.removeEventListener("playing", markReady);
+			video.removeEventListener("canplay", tryPlay);
+			video.removeEventListener("loadeddata", tryPlay);
+			video.removeEventListener("waiting", markLoading);
 			video.removeEventListener("error", markLoading);
 			video.removeEventListener("stalled", markLoading);
-			video.removeEventListener("loadeddata", tryPlay);
 			video.removeEventListener("ended", ensureLoopingPlayback);
-			video.removeEventListener("pause", ensureLoopingPlayback);
-			video.removeEventListener("stalled", ensureLoopingPlayback);
+			video.removeEventListener("pause", markLoading);
 			document.removeEventListener("visibilitychange", onVisibilityChange);
 		};
 	}, [src, muted]);
@@ -107,7 +102,7 @@ export default function BackgroundVideo({
 				src={src}
 				autoPlay
 				loop
-				muted={muted}
+				muted
 				playsInline
 				preload="auto"
 				poster={placeholderSrc}

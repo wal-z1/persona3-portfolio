@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import bgVideo from "./assets/main1.optimized.mp4";
 import mainm from "./assets/mainm.jpeg";
 import BackgroundVideo from "./components/BackgroundVideo";
@@ -6,6 +6,7 @@ import MobileBackButton from "./components/MobileBackButton";
 import { PROFILE, SOCIAL_LINKS } from "./data/portfolioData";
 import { usePersonaSfx } from "./lib/usePersonaSfx";
 import { useSafeBackNavigation } from "./lib/useSafeBackNavigation";
+import { useNavigate } from "react-router-dom";
 
 const ABOUT_TEXT =
 	"CS Student coding random projects and doing CTFs for fun. I make random things - check out the repos.";
@@ -17,40 +18,81 @@ const QUICK_FACTS = [
 	"Interested in realtime apps, tools, and graphics experiments",
 ];
 
-const LINK_MAP = {
-	GitHub: SOCIAL_LINKS.find((item) => item.label === "GitHub")?.href,
-	LinkedIn: SOCIAL_LINKS.find((item) => item.label === "LinkedIn")?.href,
-	picoCTF: SOCIAL_LINKS.find((item) => item.label === "picoCTF")?.href,
-	HTB: SOCIAL_LINKS.find((item) => item.label === "HackTheBox")?.href,
-};
+const GITHUB_LINK = SOCIAL_LINKS.find((item) => item.label === "GitHub")?.href;
 
 export default function AboutMe({ mediaMuted = true, sfxMuted = true }) {
 	const { goBack } = useSafeBackNavigation("/");
+	const navigate = useNavigate();
+	const panelRef = useRef(null);
 	const { playHover, playConfirm, playBack } = usePersonaSfx({
 		muted: sfxMuted,
 	});
+
+	const openGithub = () => {
+		if (!GITHUB_LINK) return;
+		playConfirm();
+		window.open(GITHUB_LINK, "_blank", "noopener,noreferrer");
+	};
+
+	const openSocialHub = () => {
+		playConfirm();
+		navigate("/socials");
+	};
+
+	const handleBack = () => {
+		playBack();
+		goBack();
+	};
+
+	const scrollPanelBy = (distance) => {
+		const panel = panelRef.current;
+		if (!panel) return;
+		playHover();
+		panel.scrollBy({ top: distance, behavior: "smooth" });
+	};
 
 	useEffect(() => {
 		const onKeyDown = (e) => {
 			const key = e.key.toLowerCase();
 
-			if (e.key === "Escape" || e.key === "Backspace" || key === "a") {
-				playBack();
-				goBack();
+			if (
+				e.key === "Escape" ||
+				e.key === "Backspace" ||
+				key === "a" ||
+				key === "q"
+			) {
+				e.preventDefault();
+				handleBack();
+				return;
+			}
+
+			if (e.key === "ArrowUp" || key === "w" || key === "z") {
+				e.preventDefault();
+				scrollPanelBy(-120);
+				return;
+			}
+
+			if (e.key === "ArrowDown" || key === "s") {
+				e.preventDefault();
+				scrollPanelBy(120);
+				return;
 			}
 
 			if (e.key === "Enter" || e.key === " ") {
 				e.preventDefault();
-				playConfirm();
-				if (LINK_MAP.GitHub) {
-					window.open(LINK_MAP.GitHub, "_blank");
-				}
+				openGithub();
+				return;
+			}
+
+			if (key === "l") {
+				e.preventDefault();
+				openSocialHub();
 			}
 		};
 
 		window.addEventListener("keydown", onKeyDown);
 		return () => window.removeEventListener("keydown", onKeyDown);
-	}, [goBack, playConfirm, playBack]);
+	}, [goBack, navigate, playBack, playConfirm, playHover]);
 
 	return (
 		<div id="menu-screen" className="about-root">
@@ -111,6 +153,33 @@ export default function AboutMe({ mediaMuted = true, sfxMuted = true }) {
           font-size: 18px;
           letter-spacing: 1px;
           color: rgba(214, 251, 255, 0.88);
+        }
+
+        .about-controls {
+          margin-top: 12px;
+          display: grid;
+          gap: 8px;
+        }
+
+        .about-control {
+          display: grid;
+          grid-template-columns: auto 1fr;
+          align-items: center;
+          gap: 10px;
+          font-family: 'Bebas Neue', sans-serif;
+          color: rgba(228, 252, 255, 0.92);
+          letter-spacing: 0.7px;
+          font-size: 16px;
+          line-height: 1.2;
+        }
+
+        .about-control-key {
+          background: rgba(8, 14, 56, 0.88);
+          border: 1px solid rgba(152, 239, 255, 0.5);
+          padding: 3px 8px;
+          min-width: 86px;
+          text-align: center;
+          color: #f1fdff;
         }
 
         .about-panel {
@@ -320,6 +389,18 @@ export default function AboutMe({ mediaMuted = true, sfxMuted = true }) {
             font-size: 16px;
           }
 
+          .about-controls {
+            gap: 6px;
+          }
+
+          .about-control {
+            font-size: 14px;
+          }
+
+          .about-control-key {
+            min-width: 76px;
+          }
+
           .about-panel {
             padding: 12px;
             max-height: none;
@@ -392,12 +473,31 @@ export default function AboutMe({ mediaMuted = true, sfxMuted = true }) {
 				<aside className="about-menu">
 					<h2 className="about-menu-title">About</h2>
 					<div className="about-menu-sub">Profile Dossier</div>
-					<div className="about-menu-hint">
-						Enter opens GitHub, Esc returns back.
+					<div className="about-menu-hint">Keyboard Controls</div>
+					<div
+						className="about-controls"
+						role="list"
+						aria-label="About page controls">
+						<div className="about-control" role="listitem">
+							<span className="about-control-key">W/Z/S</span>
+							<span>Scroll profile panel</span>
+						</div>
+						<div className="about-control" role="listitem">
+							<span className="about-control-key">ENTER</span>
+							<span>Open GitHub</span>
+						</div>
+						<div className="about-control" role="listitem">
+							<span className="about-control-key">L</span>
+							<span>Open Social Hub</span>
+						</div>
+						<div className="about-control" role="listitem">
+							<span className="about-control-key">A/Q/ESC</span>
+							<span>Go back</span>
+						</div>
 					</div>
 				</aside>
 
-				<section className="about-panel">
+				<section className="about-panel" ref={panelRef}>
 					<div className="about-hero">
 						<img
 							className="about-portrait"
@@ -420,21 +520,29 @@ export default function AboutMe({ mediaMuted = true, sfxMuted = true }) {
 
 					<h3 className="about-section-title">Links</h3>
 					<div className="about-links">
-						{Object.entries(LINK_MAP)
-							.filter(([, href]) => Boolean(href))
-							.map(([label, href]) => (
-								<button
-									key={label}
-									type="button"
-									className="about-link"
-									onMouseEnter={playHover}
-									onClick={() => {
-										playConfirm();
-										window.open(href, "_blank");
-									}}>
-									{label}
-								</button>
-							))}
+						{GITHUB_LINK ? (
+							<button
+								type="button"
+								className="about-link"
+								onMouseEnter={playHover}
+								onClick={openGithub}>
+								GitHub
+							</button>
+						) : null}
+						<button
+							type="button"
+							className="about-link"
+							onMouseEnter={playHover}
+							onClick={openSocialHub}>
+							Open Social Hub
+						</button>
+						<button
+							type="button"
+							className="about-link"
+							onMouseEnter={playHover}
+							onClick={handleBack}>
+							Back to Menu
+						</button>
 					</div>
 				</section>
 			</div>

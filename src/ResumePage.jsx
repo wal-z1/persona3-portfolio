@@ -15,10 +15,43 @@ const EVENT_ROWS = TIMELINE_EVENTS.map((event) => ({
 	description: event.text,
 }));
 
+const SKILL_DETAILS = {
+	React:
+		"Builds responsive frontends with component architecture, reusable UI patterns, and state-driven interactions.",
+	FastAPI:
+		"Designs backend APIs with async endpoints, validation models, and clean service structure for realtime and standard workflows.",
+	"Framer-Motion":
+		"Implements motion systems for page transitions, interaction feedback, and polished UI choreography.",
+	JavaScript:
+		"Uses modern ES features for app logic, event handling, and browser-side architecture.",
+	TypeScript:
+		"Applies type-safe interfaces and models to improve maintainability and reduce runtime bugs.",
+	"CSS / Tailwind":
+		"Builds layered UI styling systems with utility-first speed and custom visual refinements.",
+	HTML: "Creates semantic, accessible document structure with strong content hierarchy.",
+	C: "Uses C for low-level programming fundamentals, memory-aware logic, and systems-oriented problem solving.",
+	Python:
+		"Builds scripts, automation flows, and backend utilities for rapid development and tooling.",
+	"Git / GitHub":
+		"Manages version control, branching workflows, and collaboration-ready repositories.",
+	Linux:
+		"Comfortable with shell tooling, system navigation, and developer workflows in Linux environments.",
+	Figma:
+		"Designs interface drafts, visual systems, and handoff-ready UI references.",
+	"Adobe Premiere Pro":
+		"Edits long-form and short-form video with pacing, transitions, and narrative flow in mind.",
+	"Adobe After Effects":
+		"Creates motion graphics and composited effects to enhance visual presentation.",
+	Photoshop:
+		"Handles visual asset cleanup, image compositing, and design-oriented graphic editing.",
+};
+
 const SKILL_ROWS = SKILLS_DATA.map((skill) => ({
 	title: skill.title,
 	meta: skill.description,
-	description: `${skill.title} in ${skill.description}`,
+	description:
+		SKILL_DETAILS[skill.title] ||
+		`${skill.title} applied in practical ${skill.description.toLowerCase()} workflows.`,
 }));
 
 const PROJECT_ROWS = PROJECTS_DATA.map((project) => ({
@@ -73,7 +106,7 @@ export default function ResumePage({
 		const onKeyDown = (e) => {
 			const key = e.key.toLowerCase();
 
-			if (e.key === "ArrowUp" || key === "w") {
+			if (e.key === "ArrowUp" || key === "w" || key === "z") {
 				playHover();
 				setActiveSection((value) => Math.max(0, value - 1));
 			}
@@ -83,7 +116,7 @@ export default function ResumePage({
 				setActiveSection((value) => Math.min(SECTIONS.length - 1, value + 1));
 			}
 
-			if (e.key === "ArrowLeft" || key === "a") {
+			if (e.key === "ArrowLeft" || key === "a" || key === "q") {
 				playHover();
 				setActiveRow((value) => Math.max(0, value - 1));
 			}

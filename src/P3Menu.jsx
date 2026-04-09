@@ -60,10 +60,11 @@ export default function P3Menu({ onNavigate, sfxMuted = true }) {
 
 	useEffect(() => {
 		const onKey = (e) => {
-			if (e.key === "ArrowUp" || e.key.toLowerCase() === "w") {
+			const key = e.key.toLowerCase();
+			if (e.key === "ArrowUp" || key === "w" || key === "z") {
 				activate(Math.max(0, active - 1));
 			}
-			if (e.key === "ArrowDown" || e.key.toLowerCase() === "s") {
+			if (e.key === "ArrowDown" || key === "s") {
 				activate(Math.min(ITEMS.length - 1, active + 1));
 			}
 			if (e.key === "Enter" || e.key === " ") {
@@ -335,7 +336,7 @@ export default function P3Menu({ onNavigate, sfxMuted = true }) {
 						<span>HOVER + CLICK</span>
 					</div>
 					<div className="p3-hint-row">
-						<span className="p3-hint-key">W/S or ↑↓</span>
+						<span className="p3-hint-key">W/Z/S or ↑↓</span>
 						<span>NAVIGATE</span>
 					</div>
 					<div className="p3-hint-row">

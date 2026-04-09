@@ -118,7 +118,7 @@ export default function Socials({ mediaMuted = true, sfxMuted = true }) {
 			const barCount = ITEMS[active].bars;
 
 			if (focus === "left") {
-				if (e.key === "ArrowUp" || key === "w") {
+				if (e.key === "ArrowUp" || key === "w" || key === "z") {
 					playHover();
 					setActive((i) => Math.max(0, i - 1));
 					setActiveInfoBar(0);
@@ -140,7 +140,7 @@ export default function Socials({ mediaMuted = true, sfxMuted = true }) {
 					setActiveInfoBar(0);
 				}
 			} else {
-				if (e.key === "ArrowUp" || key === "w") {
+				if (e.key === "ArrowUp" || key === "w" || key === "z") {
 					playHover();
 					setActiveInfoBar((i) => Math.max(0, i - 1));
 				}
@@ -148,7 +148,7 @@ export default function Socials({ mediaMuted = true, sfxMuted = true }) {
 					playHover();
 					setActiveInfoBar((i) => Math.min(barCount - 1, i + 1));
 				}
-				if (e.key === "ArrowLeft" || key === "a") {
+				if (e.key === "ArrowLeft" || key === "a" || key === "q") {
 					playHover();
 					setFocus("left");
 				}
@@ -170,7 +170,8 @@ export default function Socials({ mediaMuted = true, sfxMuted = true }) {
 				}
 			}
 			if (
-				((e.key === "ArrowLeft" || key === "a") && focus === "left") ||
+				((e.key === "ArrowLeft" || key === "a" || key === "q") &&
+					focus === "left") ||
 				e.key === "Escape" ||
 				e.key === "Backspace"
 			) {
@@ -1088,7 +1089,7 @@ export default function Socials({ mediaMuted = true, sfxMuted = true }) {
 
 			<div className={`sc-footer${mounted ? " mounted" : ""}`}>
 				<div className="sc-footer-row">
-					<span className="sc-footer-key">W/S or ↑↓</span>
+					<span className="sc-footer-key">W/Z/S or ↑↓</span>
 					<span>SELECT CATEGORY OR ITEM</span>
 				</div>
 				<div className="sc-footer-row">
@@ -1096,7 +1097,7 @@ export default function Socials({ mediaMuted = true, sfxMuted = true }) {
 					<span>MOVE TO RIGHT / OPEN SELECTED</span>
 				</div>
 				<div className="sc-footer-row">
-					<span className="sc-footer-key">A</span>
+					<span className="sc-footer-key">A/Q</span>
 					<span>BACK</span>
 				</div>
 				<div className="sc-footer-row">
