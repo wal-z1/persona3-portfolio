@@ -564,7 +564,7 @@ export default function Socials({ mediaMuted = true, sfxMuted = true }) {
           gap: 12px;
           padding: 10px 10px 10px 42px;
           clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 14px);
-          background: linear-gradient(180deg, rgba(12, 18, 56, 0.92), rgba(5, 9, 28, 0.96));
+          background: linear-gradient(180deg, rgba(12, 18, 56, 0.25), rgba(5, 9, 28, 0.96));
           box-shadow:
             0 14px 0 rgba(2, 6, 22, 0.92),
             inset 0 0 0 1px rgba(145,245,255,0.34),
@@ -575,7 +575,7 @@ export default function Socials({ mediaMuted = true, sfxMuted = true }) {
           width: 8px;
         }
         .sc-info-panel::-webkit-scrollbar-thumb {
-          background: rgba(145,245,255,0.72);
+          background: rgba(145, 246, 255, 0.62);
           border-radius: 10px;
         }
 
@@ -596,7 +596,7 @@ export default function Socials({ mediaMuted = true, sfxMuted = true }) {
           position: relative;
           width: 100%;
           min-height: 62px;
-          background: linear-gradient(180deg, rgba(18, 27, 74, 0.9), rgba(10, 16, 48, 0.9));
+          background: linear-gradient(180deg, rgba(18, 27, 74, 0.53), rgba(10, 16, 48, 0.53));
           pointer-events: all;
           cursor: pointer;
           z-index: 1;

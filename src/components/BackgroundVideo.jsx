@@ -21,15 +21,21 @@ export default function BackgroundVideo({
 		video.loop = true;
 		video.playsInline = true;
 		video.defaultMuted = true;
-		video.muted = true;
+		video.muted = muted;
 		const markReady = () => setIsVideoReady(true);
 		const markLoading = () => setIsVideoReady(false);
+
+		const applyDesiredMute = () => {
+			video.muted = muted;
+		};
 
 		const tryPlay = () => {
 			video.muted = true;
 			video
 				.play()
-				.then(() => {})
+				.then(() => {
+					applyDesiredMute();
+				})
 				.catch(() => {
 					// Autoplay can be blocked on some browsers until user interaction.
 				});
@@ -46,8 +52,21 @@ export default function BackgroundVideo({
 			}
 		};
 
+		const syncAudioAfterGesture = () => {
+			if (muted) {
+				video.muted = true;
+				return;
+			}
+			if (video.paused) {
+				tryPlay();
+				return;
+			}
+			applyDesiredMute();
+		};
+
 		tryPlay();
 		video.addEventListener("playing", markReady);
+		video.addEventListener("playing", applyDesiredMute);
 		video.addEventListener("canplay", tryPlay);
 		video.addEventListener("loadeddata", tryPlay);
 		video.addEventListener("waiting", markLoading);
@@ -55,6 +74,11 @@ export default function BackgroundVideo({
 		video.addEventListener("stalled", markLoading);
 		video.addEventListener("ended", ensureLoopingPlayback);
 		video.addEventListener("pause", markLoading);
+		window.addEventListener("pointerdown", syncAudioAfterGesture);
+		window.addEventListener("keydown", syncAudioAfterGesture);
+		window.addEventListener("touchstart", syncAudioAfterGesture, {
+			passive: true,
+		});
 
 		const onVisibilityChange = () => {
 			if (!document.hidden) ensureLoopingPlayback();
@@ -64,6 +88,7 @@ export default function BackgroundVideo({
 
 		return () => {
 			video.removeEventListener("playing", markReady);
+			video.removeEventListener("playing", applyDesiredMute);
 			video.removeEventListener("canplay", tryPlay);
 			video.removeEventListener("loadeddata", tryPlay);
 			video.removeEventListener("waiting", markLoading);
@@ -71,6 +96,9 @@ export default function BackgroundVideo({
 			video.removeEventListener("stalled", markLoading);
 			video.removeEventListener("ended", ensureLoopingPlayback);
 			video.removeEventListener("pause", markLoading);
+			window.removeEventListener("pointerdown", syncAudioAfterGesture);
+			window.removeEventListener("keydown", syncAudioAfterGesture);
+			window.removeEventListener("touchstart", syncAudioAfterGesture);
 			document.removeEventListener("visibilitychange", onVisibilityChange);
 		};
 	}, [src, muted]);
@@ -102,7 +130,7 @@ export default function BackgroundVideo({
 				src={src}
 				autoPlay
 				loop
-				muted
+				muted={muted}
 				playsInline
 				preload="auto"
 				poster={placeholderSrc}

@@ -1,7 +1,6 @@
 import { useCallback, useRef } from "react";
 
 let context;
-const MASTER_SFX_GAIN = 0.55;
 
 function getContext() {
 	if (!context) {
@@ -26,10 +25,7 @@ function playTone({ frequency, duration, type, gain }) {
 	oscillator.frequency.setValueAtTime(frequency, ctx.currentTime);
 
 	gainNode.gain.setValueAtTime(0.0001, ctx.currentTime);
-	gainNode.gain.exponentialRampToValueAtTime(
-		Math.max(0.0001, gain * MASTER_SFX_GAIN),
-		ctx.currentTime + 0.01,
-	);
+	gainNode.gain.exponentialRampToValueAtTime(gain, ctx.currentTime + 0.01);
 	gainNode.gain.exponentialRampToValueAtTime(
 		0.0001,
 		ctx.currentTime + duration,

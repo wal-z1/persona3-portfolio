@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import BackgroundVideo from "./components/BackgroundVideo";
 import MobileBackButton from "./components/MobileBackButton";
 import {
@@ -90,6 +90,10 @@ export default function ResumePage({
 	const { goBack } = useSafeBackNavigation("/");
 	const [activeSection, setActiveSection] = useState(0);
 	const [activeRow, setActiveRow] = useState(0);
+	const navContainerRef = useRef(null);
+	const rowsContainerRef = useRef(null);
+	const sectionButtonRefs = useRef([]);
+	const rowButtonRefs = useRef([]);
 	const { playHover, playConfirm, playBack } = usePersonaSfx({
 		muted: sfxMuted,
 	});
@@ -101,6 +105,26 @@ export default function ResumePage({
 	useEffect(() => {
 		setActiveRow(0);
 	}, [activeSection]);
+
+	useEffect(() => {
+		const target = sectionButtonRefs.current[activeSection];
+		if (!target || !navContainerRef.current) return;
+		target.scrollIntoView({
+			block: "nearest",
+			inline: "nearest",
+			behavior: "smooth",
+		});
+	}, [activeSection]);
+
+	useEffect(() => {
+		const target = rowButtonRefs.current[activeRow];
+		if (!target || !rowsContainerRef.current) return;
+		target.scrollIntoView({
+			block: "nearest",
+			inline: "nearest",
+			behavior: "smooth",
+		});
+	}, [activeSection, activeRow]);
 
 	useEffect(() => {
 		const onKeyDown = (e) => {
@@ -220,7 +244,7 @@ export default function ResumePage({
           border: 0;
           text-align: left;
           cursor: pointer;
-          background: linear-gradient(135deg, rgba(15, 24, 96, 0.95), rgba(10, 16, 70, 0.98));
+          background: linear-gradient(135deg, rgba(15, 24, 96, 0.5), rgba(10, 16, 70, 0.53));
           color: #e9fbff;
           clip-path: polygon(0 0, 97% 0, 100% 100%, 3% 100%);
           padding: 14px 16px;
@@ -260,7 +284,7 @@ export default function ResumePage({
           max-height: calc(100vh - clamp(36px, 6vw, 72px));
           overflow-y: auto;
           overflow-x: hidden;
-          background: linear-gradient(180deg, rgba(14, 25, 100, 0.96), rgba(8, 16, 68, 0.97));
+          background: linear-gradient(180deg, rgba(14, 25, 100, 0.62), rgba(8, 16, 68, 0.62));
           clip-path: polygon(0 0, 100% 0, calc(100% - 16px) 100%, 0 100%);
           box-shadow: inset 0 0 0 1px rgba(145, 240, 255, 0.2), 14px 14px 0 rgba(2, 7, 36, 0.6);
           padding: 18px;
@@ -305,7 +329,7 @@ export default function ResumePage({
           border: 0;
           width: 100%;
           text-align: left;
-          background: rgba(8, 18, 72, 0.97);
+          background: rgba(8, 18, 72, 0.51);
           color: #ecfbff;
           clip-path: polygon(0 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
           box-shadow: inset 0 0 0 1px rgba(140, 239, 255, 0.2);
@@ -542,13 +566,19 @@ export default function ResumePage({
       `}</style>
 
 			<div className="resume-shell">
-				<aside className="resume-nav" aria-label="Resume sections">
+				<aside
+					className="resume-nav"
+					aria-label="Resume sections"
+					ref={navContainerRef}>
 					<h2 className="resume-nav-title">Resume</h2>
 					<div className="resume-nav-list">
 						{SECTIONS.map((item, index) => (
 							<button
 								key={item.id}
 								type="button"
+								ref={(el) => {
+									sectionButtonRefs.current[index] = el;
+								}}
 								className={`resume-nav-card${activeSection === index ? " active" : ""}`}
 								onMouseEnter={() => {
 									playHover();
@@ -571,11 +601,14 @@ export default function ResumePage({
 						<p className="resume-panel-subtitle">{section.subtitle}</p>
 					</header>
 
-					<div className="resume-rows">
+					<div className="resume-rows" ref={rowsContainerRef}>
 						{rows.map((row, index) => (
 							<button
 								key={`${section.id}-${row.title}-${index}`}
 								type="button"
+								ref={(el) => {
+									rowButtonRefs.current[index] = el;
+								}}
 								className={`resume-row${activeRow === index ? " focused" : ""}`}
 								onMouseEnter={() => {
 									playHover();
